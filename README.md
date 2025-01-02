@@ -1,4 +1,4 @@
-# Strava-analyse
+# Strava-analyze
 
 A webpage to analyze Strava data.
 
