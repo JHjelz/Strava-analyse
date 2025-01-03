@@ -26,12 +26,15 @@ h1 {
     padding: 0;
     font-size: 10vh;
     line-height: 15vh;
-    /*flex-grow: 0;*/
+}
+
+h2 {
+    margin: 0;
+    padding: 0;
+    font-size: 6vh;
 }
 
 svg {
-    width: 11vh;
-    height: 11vh;
     fill: currentColor;
     color: green;
 }
@@ -42,6 +45,15 @@ svg {
 
 .icon-right {
     padding-right: 2vh;
+}
+
+.flex-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
 }
 
 #main-content {
@@ -64,7 +76,7 @@ svg {
 }
 
 .toggle-sidebar-btn {
-    position: fixed;
+    position: flex;
     background-color: white;
     color: green;
     border-radius: 50%;
@@ -83,6 +95,7 @@ svg {
     box-shadow: 2px 0px 5px black;
     transition: 1.0s;
     z-index: 10;
+    overflow-y: scroll;
 }
 
 #data-field, #leftSidebar, #rightSidebar .toggle-sidebar-btn {
