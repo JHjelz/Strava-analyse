@@ -34,6 +34,17 @@ h2 {
     font-size: 6vh;
 }
 
+p {
+    margin: 0;
+    padding: 0;
+    font-size: 15px;
+}
+
+p.bold {
+    font-weight: bold;
+    font-size: 20px;
+}
+
 svg {
     fill: currentColor;
     color: green;
@@ -47,6 +58,16 @@ svg {
     padding-right: 2vh;
 }
 
+button {
+    background-color: orange;
+    color: white;
+    width: 50%;
+    height: 30px;
+    border-radius: 5px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
 .flex-container {
     display: flex;
     flex-direction: row;
@@ -54,6 +75,28 @@ svg {
     flex-wrap: wrap;
     align-items: center;
     gap: 20px;
+}
+
+.toggle-sidebar-btn {
+    position: flex;
+    background-color: white;
+    color: green;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 2px 2px 5px black;
+}
+
+.input {
+    width: 100%;
+    height: 25px;
+    border-radius: 5px;
+    border-width: 1px;
+    border-color: white;
+}
+
+input::placeholder {
+    color: #999; /* Farge på placeholder-tekst */
+    font-style: italic; /* Gjør teksten litt mer subtil */
 }
 
 #main-content {
@@ -75,15 +118,6 @@ svg {
     
 }
 
-.toggle-sidebar-btn {
-    position: flex;
-    background-color: white;
-    color: green;
-    border-radius: 50%;
-    cursor: pointer;
-    box-shadow: 2px 2px 5px black;
-}
-
 #leftSidebar, #rightSidebar {
     position: fixed;
     top: 15vh;
@@ -100,4 +134,11 @@ svg {
 
 #data-field, #leftSidebar, #rightSidebar .toggle-sidebar-btn {
     transition: all 1.0s ease;
+}
+
+#submitStrava {
+    align-self: center;
+    margin-top: 20px;
+    margin-left: 25%;
+    margin-right: 25%;
 }
