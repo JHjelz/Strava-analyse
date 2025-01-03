@@ -51,14 +51,16 @@ svg {
 }
 
 #data-field {
-    width: 80%;
-    height: 100%;
-    background-color: white;
+    position: relative;
     margin: 15px;
     padding: 5px;
+    width: calc(80% - var(--margin, 0px));;
+    height: 100%;
+    background-color: white;
     border-radius: 10px;
     box-shadow: 0px 0px 10px black;
     overflow-y: scroll;
+    
 }
 
 .toggle-sidebar-btn {
@@ -73,7 +75,7 @@ svg {
 #leftSidebar, #rightSidebar {
     position: fixed;
     top: 15vh;
-    width: 250px;
+    width: 350px;
     height: 100%;
     background-color: green;
     color: white;
@@ -81,30 +83,6 @@ svg {
     box-shadow: 2px 0px 5px black;
     transition: 1.0s;
     z-index: 10;
-}
-
-/* Venstre sidebar starter utenfor skjermen */
-#leftSidebar {
-    left: -300px;
-}
-
-/* Høyre sidebar starter også utenfor skjermen */
-#rightSidebar {
-    right: -300px;
-}
-
-#sidebar button {
-    background-color: green;
-    color: white;
-    border: none;
-    padding: 15px;
-    margin: 10px;
-    width: 100%;
-    cursor: pointer;
-}
-
-#reset-btn {
-    background-color: orangered;
 }
 
 #data-field, #leftSidebar, #rightSidebar .toggle-sidebar-btn {

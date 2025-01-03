@@ -1,8 +1,5 @@
 // frontend/js/app.js
 
-// Konstant for å kontrollere sidebar:
-let openSidebar = null;
-
 // Funksjon for å lage header
 function createHeader() {
     const header = document.createElement("header");
@@ -28,41 +25,6 @@ function createHeader() {
 
     // Legg til headeren i DOM-en
     document.getElementById("header-container").appendChild(header);
-}
-
-// Funksjon for å lage sidebar
-function createSidebars() {
-    const mainContent = document.getElementById("main-content");
-
-    const leftSidebar = document.createElement('div');
-    const rightSidebar = document.createElement('div');
-    leftSidebar.id = 'leftSidebar';
-    rightSidebar.id = 'rightSidebar';
-
-    mainContent.appendChild(leftSidebar);
-    mainContent.appendChild(rightSidebar);
-
-    createSidebarButton('left');
-    createSidebarButton('right');
-}
-
-function createSidebarButton(side) {
-    const button = createSVG("toggle-sidebar-btn",
-        "M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z",
-        "6vh", "6vh", "0 0 16 16");
-
-    const position = side === 'left' ? 'left' : 'right';
-    setPositionToSVG(button, 'fixed', position, '20px', '20px');
-    document.getElementById("main-content").appendChild(button);
-
-    // Legg til event listener
-    button.addEventListener('click', () => {
-        if (side === 'left') {
-            toggleLeftSidebar();
-        } else {
-            toggleRightSidebar();
-        }
-    });
 }
 
 // Funksjon for å lage SVG-element
@@ -101,44 +63,12 @@ function createButton(text, id, onClickHandler) {
     return button;
 }
 
-// Funksjon for å åpne og lukke sidebar
-function toggleLeftSidebar() {
-    const sidebar = document.getElementById('leftSidebar');
-    // Når venstre sidebar er skjult (utenfor skjermen)
-    if (sidebar.style.left === '-300px') {
-        if (openSidebar !== null) {
-            toggleRightSidebar();
-        }
-        sidebar.style.left = '0px';
-        openSidebar = 'left';
-    } else {
-        sidebar.style.left = '-300px';
-        openSidebar = null;
-    }
-}
-
-function toggleRightSidebar() {
-    const sidebar = document.getElementById('rightSidebar');
-    // Når høyre sidebar er skjult (utenfor skjermen)
-    if (sidebar.style.right === '-300px') {
-        if (openSidebar !== null) {
-            toggleLeftSidebar();
-        }
-        sidebar.style.right = '0px';
-        openSidebar = 'right';
-    } else {
-        sidebar.style.right = '-300px';
-        openSidebar = null;
-    }
-}
-
 // Funksjon for å restarte siden
 function resetPage() {
     location.reload();
 }
 
-// Kall funksjonen for å generere sidebar ved lasting av siden
+// Kall funksjonen for å generere header ved lasting av siden
 document.addEventListener('DOMContentLoaded', () => {
     createHeader();
-    createSidebars();
 });
