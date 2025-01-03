@@ -16,6 +16,15 @@ function createButton(text, id, onClickHandler) {
     return button;
 }
 
+// Genererer input-felt:
+function createInputField(text, id) {
+    const input = document.createElement('input');
+    input.id = id;
+    input.classList.add('input');
+    input.placeholder = text;
+    return input;
+}
+
 // Genererer SVG-element:
 function createSVG(iconClass, iconPath, width, height, viewbox) {
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");

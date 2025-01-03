@@ -10,12 +10,43 @@ function generateLeftContent() {
     button.addEventListener('click', toggleLeftSidebar);
     
     const title = document.createElement('h2');
-    title.innerText = 'Velkommen!';
+    title.textContent = 'Strava-data';
+
+    const info = document.createElement('p');
+    info.textContent = 'Legg inn nødvendig informasjon for å koble til Strava';
+    
+    const i1 = document.createElement('p');
+    i1.classList.add('bold');
+    i1.textContent = "Client ID:";
+
+    const in1 = createInputField("Client ID", "idInput");
+    
+    const i2 = document.createElement('p');
+    i2.classList.add('bold');
+    i2.textContent = "Client Secret:";
+    
+    const in2 = createInputField("Client Secret", "secretInput");
+    
+    const i3 = document.createElement('p');
+    i3.classList.add('bold');
+    i3.textContent = "Refresh Token:";
+    
+    const in3 = createInputField("Refresh Token", "tokenInput");
+
+    const submit = createButton("Hent data", "submitStrava", toggleLeftSidebar);
 
     container.appendChild(button);
     container.appendChild(title);
+    container.appendChild(info);
+    container.appendChild(i1);
+    container.appendChild(in1);
+    container.appendChild(i2);
+    container.appendChild(in2);
+    container.appendChild(i3);
+    container.appendChild(in3);
 
     document.getElementById('leftSidebar').appendChild(container);
+    document.getElementById('leftSidebar').appendChild(submit);
 }
 
 // Generere sidebar-innhold:
