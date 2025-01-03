@@ -1,8 +1,8 @@
-# Strava-analyze
+# Strava-analyse
 
-A webpage to analyze Strava data.
+En nettside for å analysere Strava-data.
 
-### Set up
+### Oppsett
 
 - Backend: Flask (Python)
 - Frontend: HTML, JS and CSS
