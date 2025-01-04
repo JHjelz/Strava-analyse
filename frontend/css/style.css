@@ -99,6 +99,11 @@ input::placeholder {
     font-style: italic; /* Gjør teksten litt mer subtil */
 }
 
+input.warning {
+    color: red;
+    font-weight: bold;
+}
+
 #main-content {
     height: 80vh;
     display: flex;

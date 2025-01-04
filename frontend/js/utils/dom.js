@@ -52,3 +52,12 @@ function setPositionToSVG(svg, pos, dir, val, bottom) {
     }
     svg.style.bottom = bottom;
 }
+
+// Fjerner 'warning'-status:
+function removeWarning(id) {
+    const element = document.getElementById(id)
+    
+    if (element.classList.contains("warning")) {
+        element.classList.remove("warning");
+    }
+}

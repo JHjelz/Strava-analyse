@@ -20,20 +20,29 @@ function generateLeftContent() {
     i1.textContent = "Client ID:";
 
     const in1 = createInputField("Client ID", "idInput");
+    in1.addEventListener('click', () => {
+        removeWarning("idInput");
+    })
     
     const i2 = document.createElement('p');
     i2.classList.add('bold');
     i2.textContent = "Client Secret:";
     
     const in2 = createInputField("Client Secret", "secretInput");
+    in2.addEventListener('click', () => {
+        removeWarning("secretInput");
+    })
     
     const i3 = document.createElement('p');
     i3.classList.add('bold');
-    i3.textContent = "Refresh Token:";
+    i3.textContent = "Authorization Code:";
     
-    const in3 = createInputField("Refresh Token", "tokenInput");
+    const in3 = createInputField("Authorization Code", "authorizationInput");
+    in3.addEventListener('click', () => {
+        removeWarning("authorizationInput");
+    })
 
-    const submit = createButton("Hent data", "submitStrava", toggleLeftSidebar);
+    const submit = createButton("Hent data", "submitStrava", get_strava_data);
 
     container.appendChild(button);
     container.appendChild(title);
