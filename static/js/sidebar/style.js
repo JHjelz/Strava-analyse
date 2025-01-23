@@ -35,11 +35,11 @@ function generateLeftContent() {
     
     const i3 = document.createElement('p');
     i3.classList.add('bold');
-    i3.textContent = "Authorization Code:";
+    i3.textContent = "Refresh Token:";
     
-    const in3 = createInputField("Authorization Code", "authorizationInput");
+    const in3 = createInputField("Refresh Token", "refreshInput");
     in3.addEventListener('click', () => {
-        removeWarning("authorizationInput");
+        removeWarning("refreshInput");
     })
 
     const submit = createButton("Hent data", "submitStrava", get_strava_data);

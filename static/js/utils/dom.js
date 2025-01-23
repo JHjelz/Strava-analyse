@@ -60,4 +60,5 @@ function removeWarning(id) {
     if (element.classList.contains("warning")) {
         element.classList.remove("warning");
     }
+    element.value = "";
 }
