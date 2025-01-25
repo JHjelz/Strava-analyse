@@ -1,3 +1,5 @@
+/* static/css/style.css */
+
 /* Generell stil for siden */
 html body {
     font-family: monospace;
@@ -97,6 +99,11 @@ button {
 input::placeholder {
     color: #999; /* Farge på placeholder-tekst */
     font-style: italic; /* Gjør teksten litt mer subtil */
+}
+
+input.warning {
+    color: red;
+    font-weight: bold;
 }
 
 #main-content {

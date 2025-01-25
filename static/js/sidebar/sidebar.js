@@ -1,4 +1,4 @@
-// frontend/js/sidebar.js
+// static/js/sidebar/sidebar.js
 
 // Generere sidebars:
 function createSidebars() {

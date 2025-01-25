@@ -1,4 +1,4 @@
-// frontend/js/utils/dom.js
+// static/js/utils/dom.js
 
 // Genererer div:
 function createDiv() {
@@ -51,4 +51,14 @@ function setPositionToSVG(svg, pos, dir, val, bottom) {
         svg.style.right = val;
     }
     svg.style.bottom = bottom;
+}
+
+// Fjerner 'warning'-status:
+function removeWarning(id) {
+    const element = document.getElementById(id)
+    
+    if (element.classList.contains("warning")) {
+        element.classList.remove("warning");
+        element.value = "";
+    }
 }

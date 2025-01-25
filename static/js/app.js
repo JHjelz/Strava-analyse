@@ -1,4 +1,4 @@
-// frontend/js/app.js
+// static/js/app.js
 
 // Genererer header:
 function createHeader() {

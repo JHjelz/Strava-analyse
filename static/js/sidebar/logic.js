@@ -1,4 +1,4 @@
-// frontend/js/sidebar/logic.js
+// static/js/sidebar/logic.js
 
 // Kontrollere åpne sidebars:
 let openSidebar = null;
