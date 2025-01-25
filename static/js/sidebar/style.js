@@ -1,4 +1,4 @@
-// frontend/js/sidebar/style.js
+// static/js/sidebar/style.js
 
 // Generere sidebar-innhold:
 function generateLeftContent() {

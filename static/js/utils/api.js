@@ -1,4 +1,4 @@
-// frontend/js/utils/api.js
+// static/js/utils/api.js
 
 // Hente data fra Strava:
 async function get_strava_data() {
@@ -16,14 +16,16 @@ async function get_strava_data() {
             input.value = "Ugyldig verdi!";
             bool = true;
         }
-    })
+    });
 
     if (bool) {
         return;
     }
 
     try {
-        const response = await fetch('/get_strava_data', {
+        createLoadingModal();
+        updateProgress(0);
+        const response = await fetch('/access/get_strava_data', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -57,5 +59,7 @@ async function get_strava_data() {
         <br>
         <p>Det oppsto en feil under nedlasting av Strava-data!</p>
         <p>Detaljer: ${error.message}</p>`;
+    } finally {
+        removeLoadingModal();
     }
 }

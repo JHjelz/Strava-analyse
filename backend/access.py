@@ -1,10 +1,24 @@
 # backend/access.py
 
+#  Bibliotek:
+
+from flask import Blueprint, jsonify, request
+from flask_socketio import SocketIO
 import logging
 import requests
 
+from backend.activities import get_all_activities
+
+# Variabler:
+
+access_bp = Blueprint('access', __name__)
+
+socketio = SocketIO()
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Funksjoner:
 
 """
 Om ACCESS_TOKEN utløper, kjør denne koden.
@@ -60,3 +74,33 @@ def get_access_token(client_id, client_secret, authorization_code):
     except requests.exceptions.RequestException as e:
         logger.error("Feil under oppdatering av access_token: %s", e)
         return None, None
+
+# WebSocket Event Handlers
+@socketio.on('connect')
+def handle_connect():
+    print("Bruker tilkoblet")
+
+# Routes:
+
+@access_bp.route('/get_strava_data', methods=['POST'])
+def get_strava_data():
+    data = request.get_json()
+    client_id = data.get('client_id')
+    client_secret = data.get('client_secret')
+    refresh_token = data.get('refresh_token')
+    
+    if not client_id or not client_secret or not refresh_token:
+        return jsonify({"error": "Manglende nødvendige parametre"}), 400
+    
+    # Hent eller oppdater tokens
+    access_token, refresh = refresh_access_token(client_id, client_secret, refresh_token)
+    
+    if not access_token:
+        return jsonify({"error": "Kunne ikke hente access token"}), 400
+    
+    activities = get_all_activities(access_token, socketio)
+    
+    if activities:
+        return jsonify(activities)
+    else:
+        return jsonify({"error": "Kunne ikke hente data fra Strava"}), 500

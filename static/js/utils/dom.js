@@ -1,4 +1,4 @@
-// frontend/js/utils/dom.js
+// static/js/utils/dom.js
 
 // Genererer div:
 function createDiv() {
@@ -59,6 +59,6 @@ function removeWarning(id) {
     
     if (element.classList.contains("warning")) {
         element.classList.remove("warning");
+        element.value = "";
     }
-    element.value = "";
 }
