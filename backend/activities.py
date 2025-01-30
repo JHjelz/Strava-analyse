@@ -43,7 +43,6 @@ def get_all_activities(access_token, socketio, activities_per_page=100):
     for key in stats:
         if 'all' in key:
             keys.append(key)
-    print(keys)
     for el in keys:
         total_activities += int(stats[el]["count"])
     if total_activities == 0:
