@@ -52,7 +52,9 @@ async function get_strava_data() {
             input.value = "";
         })
         toggleLeftSidebar();
+        document.getElementById('left-sidebar-btn').style.display = 'none';
         document.getElementById('right-sidebar-btn').style.display = 'block';
+        document.getElementById("restartButton").style.display = 'block';
     } catch (error) {
         box.innerHTML = `
         <h2>Feil</h2>

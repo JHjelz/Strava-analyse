@@ -88,6 +88,15 @@ button {
     box-shadow: 2px 2px 5px black;
 }
 
+.restart-btn {
+    position: flex;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 2px 2px 5px black;
+}
+
 .input {
     width: 100%;
     height: 25px;

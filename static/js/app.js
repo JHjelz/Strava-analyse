@@ -22,11 +22,6 @@ function createHeader() {
     document.getElementById("header-container").appendChild(header);
 }
 
-// Restarter siden:
-function resetPage() {
-    location.reload();
-}
-
 // Genererer innhold ved oppstart av siden:
 document.addEventListener('DOMContentLoaded', () => {
     createHeader();
@@ -38,5 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     createSidebarButton('left', 'left-sidebar-btn');
     createSidebarButton('right', 'right-sidebar-btn');
+    createRestartButton();
+
     document.getElementById("right-sidebar-btn").style.display = 'none';
+    document.getElementById("restartButton").style.display = 'none';
 });
