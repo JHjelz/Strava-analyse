@@ -88,10 +88,10 @@ button {
     box-shadow: 2px 2px 5px black;
 }
 
-#restart-btn {
+.restart-btn {
     position: flex;
-    background-color: white;
-    color: red;
+    background-color: red;
+    color: white;
     border-radius: 50%;
     cursor: pointer;
     box-shadow: 2px 2px 5px black;
