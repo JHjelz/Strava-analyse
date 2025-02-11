@@ -44,10 +44,7 @@ async function get_strava_data() {
     
         const data = await response.json();
         sessionStorage.setItem("StravaData", JSON.stringify(data)); // Lagre data i StravaData
-        box.innerHTML = `
-        <h2>Strava-data lastet ned</h2>
-        <br>
-        <p>Begynn å analysere data!</p>`;
+        resetDataField();
         [id, secret, refresh].forEach(input => {
             input.value = "";
         })

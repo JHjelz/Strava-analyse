@@ -1,6 +1,6 @@
 // static/js/elements/progressBar.js
 
-// Dynamisk opprettelse av vventeboks og progress bar::
+// Dynamisk opprettelse av venteboks og progress bar::
 function createLoadingModal() {
     const modal = document.createElement("div");
     modal.id = "loadingModal";
