@@ -68,15 +68,29 @@ button {
     border-radius: 5px;
     font-size: 20px;
     font-weight: bold;
+    cursor: pointer;
+}
+
+.analysis {
+    width: 80%;
+    height: 80px;
+    font-size: 18px;
 }
 
 .flex-container {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
     flex-wrap: wrap;
-    align-items: center;
     gap: 20px;
+    align-content: baseline;
+}
+
+.menu {
+    align-items: center;
+    flex-grow: 1;
+    min-height: 0;
+    height: 560px;
+    overflow-y: auto;
 }
 
 .toggle-sidebar-btn {
@@ -106,8 +120,8 @@ button {
 }
 
 input::placeholder {
-    color: #999; /* Farge på placeholder-tekst */
-    font-style: italic; /* Gjør teksten litt mer subtil */
+    color: #999;
+    font-style: italic;
 }
 
 input.warning {
@@ -138,18 +152,25 @@ input.warning {
     position: fixed;
     top: 15vh;
     width: 350px;
-    height: 100%;
+    height: calc(100% - 15vh);
     background-color: green;
     color: white;
     padding: 20px;
     box-shadow: 2px 0px 5px black;
     transition: 1.0s;
     z-index: 10;
-    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow: hidden;
 }
 
-#data-field, #leftSidebar, #rightSidebar .toggle-sidebar-btn {
+#data-field, #leftSidebar, #rightSidebar, .toggle-sidebar-btn {
     transition: all 1.0s ease;
+}
+
+#rightSidebar {
+    align-items: center;
 }
 
 #submitStrava {

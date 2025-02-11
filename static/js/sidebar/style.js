@@ -68,10 +68,27 @@ function generateRightContent() {
     button.addEventListener('click', toggleRightSidebar);
     
     const title = document.createElement('h2');
-    title.innerText = 'Velkommen!';
+    title.innerText = 'Velg analyse';
+
+    const buttonContainer = createDiv();
+    buttonContainer.classList.add("menu");
+
+    const activities = createButton("Activities", "activityButton", toggleRightSidebar);
+    activities.classList.add("analysis");
+
+    const kudos = createButton("Kudos", "kudosButton", toggleRightSidebar);
+    kudos.classList.add("analysis")
+
+    const everything = createButton("Show all activities", "allButton", toggleRightSidebar);
+    everything.classList.add("analysis");
+
+    buttonContainer.appendChild(activities);
+    buttonContainer.appendChild(kudos);
+    buttonContainer.appendChild(everything);
 
     container.appendChild(button);
     container.appendChild(title);
+    container.appendChild(buttonContainer);
 
     document.getElementById('rightSidebar').appendChild(container);
 }
