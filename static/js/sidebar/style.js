@@ -79,16 +79,19 @@ function generateRightContent() {
     const kudos = createButton("Kudos", "kudosButton", toggleRightSidebar);
     kudos.classList.add("analysis")
 
-    const everything = createButton("Show all activities", "allButton", toggleRightSidebar);
+    const everything = createButton("Show all activities", "allButton", showActivities);
     everything.classList.add("analysis");
 
     buttonContainer.appendChild(activities);
     buttonContainer.appendChild(kudos);
     buttonContainer.appendChild(everything);
+    
+    const resetDataFieldButton = createButton("Reset data field", "Reset-data-field-btn", resetDataField);
 
     container.appendChild(button);
     container.appendChild(title);
     container.appendChild(buttonContainer);
+    container.appendChild(resetDataFieldButton);
 
     document.getElementById('rightSidebar').appendChild(container);
 }

@@ -62,3 +62,11 @@ function removeWarning(id) {
         element.value = "";
     }
 }
+
+function resetDataField() {
+    const box = document.getElementById("data-field");
+    box.innerHTML = `
+        <h2>Strava-data lastet ned</h2>
+        <br>
+        <p>Begynn å analysere data!</p>`;
+}
