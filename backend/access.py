@@ -88,12 +88,12 @@ def get_strava_data():
     client_id = data.get('client_id')
     client_secret = data.get('client_secret')
     refresh_token = data.get('refresh_token')
-    
+
     if not client_id or not client_secret or not refresh_token:
         return jsonify({"error": "Manglende nødvendige parametre"}), 400
     
     # Hent eller oppdater tokens
-    access_token, refresh = refresh_access_token(client_id, client_secret, refresh_token)
+    access_token, _ = refresh_access_token(client_id, client_secret, refresh_token)
     
     if not access_token:
         return jsonify({"error": "Kunne ikke hente access token"}), 400
@@ -104,3 +104,17 @@ def get_strava_data():
         return jsonify(activities)
     else:
         return jsonify({"error": "Kunne ikke hente data fra Strava"}), 500
+
+@access_bp.route('/verify_credentials', methods=['POST'])
+def verify_credentials():
+    data = request.get_json()
+    client_id = data.get('client_id')
+    client_secret = data.get('client_secret')
+    refresh_token = data.get('refresh_token')
+
+    access_token, _ = refresh_access_token(client_id, client_secret, refresh_token)
+
+    if access_token:
+        return jsonify({"valid": True})
+    else:
+        return jsonify({"valid": False}), 401

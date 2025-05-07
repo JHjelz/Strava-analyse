@@ -42,7 +42,7 @@ function generateLeftContent() {
         removeWarning("refreshInput");
     })
 
-    const submit = createButton("Hent data", "submitStrava", get_strava_data);
+    const submit = createButton("Hent data", "submitStrava", storeStravaCredentials);
 
     container.appendChild(button);
     container.appendChild(title);
