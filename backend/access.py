@@ -13,7 +13,7 @@ from backend.activities import get_all_activities
 
 access_bp = Blueprint('access', __name__)
 
-socketio = SocketIO()
+socketio = None # SocketIO(cors_allowed_origins="https://jhjelz.github.io")
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -74,6 +74,10 @@ def get_access_token(client_id, client_secret, authorization_code):
     except requests.exceptions.RequestException as e:
         logger.error("Feil under oppdatering av access_token: %s", e)
         return None, None
+
+def set_socketio_instance(sio):
+    global socketio
+    socketio = sio
 
 # WebSocket Event Handlers
 @socketio.on('connect')

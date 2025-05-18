@@ -3,14 +3,17 @@
 from flask import Flask, render_template
 from flask_cors import CORS
 
-from backend.access import access_bp, socketio
+from backend.access import access_bp, socketio, set_socketio_instance
 from backend.activities import activities_bp
 
 app = Flask(__name__)
-CORS(app, origins=["https://jhjelz.github.io"])
+CORS(app, origins=["https://jhjelz.github.io"], resources={
+    r"/*": {"origins": "https://jhjelz.github.io"}
+})
 
 # Initialiser SocketIO med Flask-appen
 socketio.init_app(app)
+set_socketio_instance(socketio)
 
 # Registrer Blueprints:
 app.register_blueprint(access_bp, url_prefix="/access")
