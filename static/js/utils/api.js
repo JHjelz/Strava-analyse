@@ -1,5 +1,7 @@
 // static/js/utils/api.js
 
+const BACKEND_BASE_URL = "https://strava-backend-yx87.onrender.com";
+
 // Lagre Strava-innloggingsparametere:
 async function storeStravaCredentials() {
     const client_id = document.getElementById("idInput").value;
@@ -8,7 +10,7 @@ async function storeStravaCredentials() {
     const box = document.getElementById("data-field");
 
     try {
-        const response = await fetch('/access/verify_credentials', {
+        const response = await fetch(`${BACKEND_BASE_URL}/access/verify_credentials`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
