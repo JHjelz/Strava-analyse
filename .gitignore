@@ -11,3 +11,4 @@ env/
 
 # Private data
 private.py
+strava_token.json

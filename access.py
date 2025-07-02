@@ -2,21 +2,9 @@
 
 #  Bibliotek:
 
-from flask import Blueprint, jsonify, request
-from flask_socketio import SocketIO
-import logging
 import requests
 
-from backend.activities import get_all_activities
-
-# Variabler:
-
-access_bp = Blueprint('access', __name__)
-
-socketio = None # SocketIO(cors_allowed_origins="https://jhjelz.github.io")
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+from activities import get_all_activities
 
 # Funksjoner:
 
@@ -42,7 +30,7 @@ def refresh_access_token(client_id, client_secret, refresh_token):
         response_data = response.json()
         return response_data['access_token'], response_data['refresh_token']
     except requests.exceptions.RequestException as e:
-        logger.error("Feil under oppdatering av access_token: %s", e)
+        print(f"Feil under oppdatering av access_token: {e}")
         return None, None
 
 """
@@ -69,56 +57,17 @@ def get_access_token(client_id, client_secret, authorization_code):
                 'grant_type': 'authorization_code'
             }
         )
+        response.raise_for_status()  # Sjekker for HTTP-feil
         response_data = response.json()
         return response_data['access_token'], response_data['refresh_token']
     except requests.exceptions.RequestException as e:
-        logger.error("Feil under oppdatering av access_token: %s", e)
+        print(f"Feil under oppdatering av access_token: {e}")
         return None, None
 
-def set_socketio_instance(sio):
-    global socketio
-    socketio = sio
+client_id = "138324"
+client_secret = "33c3ac7f0d1870b77570a10a845256d295c287d5"
+authorization_code = "d1ba6793d28c5228237d40670c0b407cc72b77cd"
+refresh_token = "6594aa14a91dbe8e1eafb0a32058da075375330b"
 
-# WebSocket Event Handlers
-@socketio.on('connect')
-def handle_connect():
-    print("Bruker tilkoblet")
-
-# Routes:
-
-@access_bp.route('/get_strava_data', methods=['POST'])
-def get_strava_data():
-    data = request.get_json()
-    client_id = data.get('client_id')
-    client_secret = data.get('client_secret')
-    refresh_token = data.get('refresh_token')
-
-    if not client_id or not client_secret or not refresh_token:
-        return jsonify({"error": "Manglende nødvendige parametre"}), 400
-    
-    # Hent eller oppdater tokens
-    access_token, _ = refresh_access_token(client_id, client_secret, refresh_token)
-    
-    if not access_token:
-        return jsonify({"error": "Kunne ikke hente access token"}), 400
-    
-    activities = get_all_activities(access_token, socketio)
-    
-    if activities:
-        return jsonify(activities)
-    else:
-        return jsonify({"error": "Kunne ikke hente data fra Strava"}), 500
-
-@access_bp.route('/verify_credentials', methods=['POST'])
-def verify_credentials():
-    data = request.get_json()
-    client_id = data.get('client_id')
-    client_secret = data.get('client_secret')
-    refresh_token = data.get('refresh_token')
-
-    access_token, _ = refresh_access_token(client_id, client_secret, refresh_token)
-
-    if access_token:
-        return jsonify({"valid": True})
-    else:
-        return jsonify({"valid": False}), 401
+print(refresh_access_token(client_id, client_secret, refresh_token))
+#get_access_token(client_id, client_secret, authorization_code)

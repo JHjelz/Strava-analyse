@@ -1,17 +1,7 @@
 # backend/activities.py
 
 # Bibliotek:
-
-from flask import Blueprint
-import logging
 import requests
-
-# Variabler:
-
-activities_bp = Blueprint('activities', __name__)
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 # Funksjoner:
 
@@ -31,11 +21,11 @@ def get_all_activities(access_token, socketio, activities_per_page=100):
 
     response = requests.get('https://www.strava.com/api/v3/athlete', headers=headers)
     if response.status_code != 200:
-        logger.error("Feil ved henting av atlet-data: %d", response.status_code)
+        print("Feil ved henting av atlet-data: %d", response.status_code)
     athlete_id = response.json()["id"]
     response = requests.get(f'https://www.strava.com/api/v3/athletes/{athlete_id}/stats', headers=headers)
     if response.status_code != 200:
-        logger.error("Feil ved henting av statistikk: %d", response.status_code)
+        print("Feil ved henting av statistikk: %d", response.status_code)
         return None
     stats = response.json()
     keys = []
@@ -57,7 +47,7 @@ def get_all_activities(access_token, socketio, activities_per_page=100):
         )
         
         if response.status_code != 200:
-            logger.error("Feil ved henting av data på side %s: %d", page, response.status_code)
+            print("Feil ved henting av data på side %s: %d", page, response.status_code)
             break
         
         activities = response.json()
@@ -74,5 +64,3 @@ def get_all_activities(access_token, socketio, activities_per_page=100):
     socketio.emit('progress', {'progress': 100})
 
     return all_activities if all_activities else None
-
-# Routes:
