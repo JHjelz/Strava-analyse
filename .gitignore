@@ -10,5 +10,5 @@ venv/
 env/
 
 # Private data
-private.py
-strava_token.json
+privat.py
+strava_tokens.json
