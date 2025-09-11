@@ -5,19 +5,31 @@
 import requests
 import time
 
-from privat import privat_info
+from privat import PrivatInfo
 
 # Funksjoner:
 
-"""
-Om ACCESS_TOKEN utløper, kjør denne koden.
-Oppdater refresh_token her og der det trengs andre steder for å få applikasjonen til å fungere.
-Oppdater access_token der det trengs andre steder for å få applikasjonen til å fungere.
-"""
-
 def oppdater_access_token(client_id, client_secret, refresh_token):
     """
-    Henter ny access token og refresh token fra Strava.
+    Henter nytt access_token og refresh_token fra Strava.
+
+    Brukes når access_token har utløpt. Denne funksjonen kalles automatisk
+    ved behov, men kan også brukes manuelt dersom du får problemer med
+    autentisering.
+
+    Oppdater `refresh_token` og `access_token` i applikasjonen når disse er hentet.
+
+    Args:
+        client_id (str): Strava-klient-ID.
+        client_secret (str): Strava-klient-hemmelighet.
+        refresh_token (str): Gammelt refresh token, brukt for å hente nye tokens.
+
+    Returns:
+        tuple:
+            - access_token (str | None): Nytt access token.
+            - refresh_token (str | None): Nytt refresh token.
+            - expires_at (int | None): Unix timestamp for når access token utløper.
+            Hvis noe går galt returneres (None, None, None).
     """
     try:
         response = requests.post(
@@ -36,20 +48,34 @@ def oppdater_access_token(client_id, client_secret, refresh_token):
         print(f"Feil under oppdatering av access_token: {e}")
         return None, None, None
 
-"""
-Dette er funksjonen for  å starte oppsettet. Målet er å få tak i AUTHORIZATION_CODE.
+def hent_access_token(client_id, client_secret, authorization_code):
+    """
+    Henter nytt access_token og refresh_token ved bruk av authorization_code.
 
-Bruk følgende lenke i nettleseren din med den gitte client_id:
-https://www.strava.com/oauth/authorize?client_id=ID&response_type=code&redirect_uri=http://localhost&approval_prompt=force&scope=read_all,activity:read_all
+    Dette er **første steg i oppsettet**. Målet er å få tak i authorization_code,
+    som så kan brukes til å hente access_token og refresh_token.
 
-Du vil da komme til en side hvor du trykker 'Authorize'.
-Du kommer så til en side som ikke eksisterer med lenke lik den under:
-http://localhost/?state=&code=authCode&scope=read,activity:read_all,read_all
+    Fremgangsmåte:
+        1. Gå til denne lenken i nettleseren, med din `client_id`:
+           https://www.strava.com/oauth/authorize?client_id=ID&response_type=code&redirect_uri=http://localhost&approval_prompt=force&scope=read_all,activity:read_all
+        2. Trykk "Authorize" på Strava-siden.
+        3. Du blir videresendt til en ugyldig side, f.eks.:
+           http://localhost/?state=&code=AUTHORIZATION_CODE&scope=read,activity:read_all,read_all
+        4. Kopier verdien `AUTHORIZATION_CODE` fra lenken.
+        5. Bruk denne funksjonen for å hente tokens.
 
-Her må du kopiere AUTHORIZATION_CODE.
-"""
+    Args:
+        client_id (str): Strava-klient-ID.
+        client_secret (str): Strava-klient-hemmelighet.
+        authorization_code (str): Authorization code hentet manuelt via Strava.
 
-def fa_access_token(client_id, client_secret, authorization_code):
+    Returns:
+        tuple:
+            - access_token (str | None): Nytt access token.
+            - refresh_token (str | None): Nytt refresh token.
+            - expires_at (int | None): Unix timestamp for når access token utløper.
+            Hvis noe går galt returneres (None, None, None).
+    """
     try:
         response = requests.post(
             'https://www.strava.com/api/v3/oauth/token',
@@ -67,13 +93,27 @@ def fa_access_token(client_id, client_secret, authorization_code):
         print(f"Feil under oppdatering av access_token: {e}")
         return None, None, None
 
-def sikre_tokens(info: privat_info):
+def sikre_tokens(info: PrivatInfo):
     """
-    Sørger for at tokens er gyldige.
-    Hvis strava_tokens.json ikke finnes - bruk authorization_code for første init.
-    Ellers - bruk refresh_token for å fornye access token.
+    Sørger for at tokens er gyldige og oppdaterer dem ved behov.
+
+    Funksjonen sjekker følgende:
+        - Hvis ingen tokens er lagret: henter nye med authorization_code.
+        - Hvis access_token er utløpt: oppdaterer med refresh_token.
+        - Hvis access_token fortsatt er gyldig: returnerer eksisterende tokens.
+
+    Brukes som hovedinngang for å garantere gyldige tokens under kjøring.
+
+    Args:
+        info (PrivatInfo): Et PrivatInfo-objekt med client_id, client_secret,
+            authorization_code og eventuelt lagrede tokens.
+
+    Returns:
+        tuple:
+            - access_token (str | None): Gyldig access token.
+            - refresh_token (str | None): Refresh token knyttet til access token.
     """
-    kreditering = info.fa_private_info()
+    kreditering = info.hent_privat_info()
     client_id = kreditering["client_id"]
     client_secret = kreditering["client_secret"]
     access_token = kreditering.get("access_token")
@@ -84,7 +124,7 @@ def sikre_tokens(info: privat_info):
 
     if not access_token or not refresh_token:
         print("Ingen tokens funnet, henter nye med authorization_code...")
-        access_token, refresh_token, expires_at = fa_access_token(
+        access_token, refresh_token, expires_at = hent_access_token(
             client_id, client_secret, kreditering["authorization_code"]
         )
         info.lagre_tokens(access_token, refresh_token, expires_at)
