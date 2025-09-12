@@ -11,14 +11,14 @@ class StravaKlient:
     """
     Strava-klient som håndterer autentisering og tokens mot Strava API-et.
 
-    Denne klassen fungerer som "inngangspunkt" til systemet. Ved opprettelse
-    sørger den automatisk for at gyldige tokens er tilgjengelige, ved å bruke
+    Klassen fungerer som inngangspunkt til systemet. Ved opprettelse
+    sørger den for at gyldige tokens er tilgjengelige, ved å bruke
     `PrivatInfo` og `sikre_tokens`.
 
     Attributter:
         info (PrivatInfo): Holder konfigurasjon og lagrede Strava-tokens.
-        access_token (str): Gyldig access token som kan brukes mot API-et.
-        refresh_token (str): Refresh token knyttet til access_token.
+        access_token (str | None): Gyldig access token som kan brukes mot API-et (None ved feil).
+        refresh_token (str | None): Refresh token knyttet til access_token (None ved feil).
     """
 
     def __init__(self):
