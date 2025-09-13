@@ -6,4 +6,4 @@ from python.strava import StravaKlient
 
 # Program:
 
-klient = StravaKlient
+klient = StravaKlient()
