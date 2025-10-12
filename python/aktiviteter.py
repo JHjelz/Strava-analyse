@@ -37,9 +37,9 @@ def hent_aktiviteter(access_token: str, per_page: int = 20) -> list[dict]:
     headers = {"Authorization": f"Bearer {access_token}"}
 
     try:
-        response = requests.get(url, headers=headers, params={"per_page": per_page})
-        response.raise_for_status()
-        return response.json()
+        respons = requests.get(url, headers=headers, params={"per_page": per_page})
+        respons.raise_for_status()
+        return respons.json()
     except requests.exceptions.HTTPError as e:
         print(f"HTTP-feil ved henting av aktiviteter: {e}")
     except requests.exceptions.RequestException as e:
@@ -71,9 +71,9 @@ def finn_aktiviteter_med_navn(access_token: str, navn: str, maks_treff: int = 20
 
     while len(treff) < maks_treff:
         try:
-            response = requests.get(url, headers=headers, params={"per_page": per_page, "page": side})
-            response.raise_for_status()
-            aktiviteter = response.json()
+            respons = requests.get(url, headers=headers, params={"per_page": per_page, "page": side})
+            respons.raise_for_status()
+            aktiviteter = respons.json()
         
         except requests.exceptions.RequestException as e:
             print(f"Feil ved henting av aktiviteter: {e}")
@@ -117,9 +117,9 @@ def finn_aktiviteter_paa_dato(access_token: str, dato_str: str, per_page: int = 
 
     while True:
         try:
-            response = requests.get(url, headers=headers, params={"per_page": per_page, "page": side})
-            response.raise_for_status()
-            aktiviteter = response.json()
+            respons = requests.get(url, headers=headers, params={"per_page": per_page, "page": side})
+            respons.raise_for_status()
+            aktiviteter = respons.json()
         
         except requests.exceptions.RequestException as e:
             print(f"Feil ved henting av aktiviteter: {e}")
@@ -181,9 +181,9 @@ def finn_aktiviteter_med_type(access_token: str, aktivitetstype: str, maks_treff
 
     while len(treff) < maks_treff:
         try:
-            response = requests.get(url, headers=headers, params={"per_page": per_page, "page": side})
-            response.raise_for_status()
-            aktiviteter = response.json()
+            respons = requests.get(url, headers=headers, params={"per_page": per_page, "page": side})
+            respons.raise_for_status()
+            aktiviteter = respons.json()
         except requests.exceptions.RequestException as e:
             print(f"Feil ved henting av aktiviteter: {e}")
             break

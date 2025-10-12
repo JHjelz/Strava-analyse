@@ -25,9 +25,9 @@ def hent_kudosgivere(access_token: str, aktivitet_id: int, per_page: int = 200) 
 
     while True:
         try:
-            response = requests.get(url, headers=headers, params={"per_page": per_page, "page": side})
-            response.raise_for_status()
-            personer = response.json()
+            respons = requests.get(url, headers=headers, params={"per_page": per_page, "page": side})
+            respons.raise_for_status()
+            personer = respons.json()
         except requests.exceptions.RequestException as e:
             print(f"Feil ved henting av kudos for aktivitet {aktivitet_id}: {e}")
             break

@@ -6,6 +6,7 @@ import requests
 import time
 
 from privat import PrivatInfo
+from python.visning import sekunder_til_tid
 
 # Funksjoner:
 
@@ -29,7 +30,7 @@ def oppdater_access_token(client_id: str, client_secret: str, refresh_token: str
             Hvis noe går galt returneres (None, None, None).
     """
     try:
-        response = requests.post(
+        respons = requests.post(
             'https://www.strava.com/api/v3/oauth/token',
             data={
                 'client_id': client_id,
@@ -38,8 +39,8 @@ def oppdater_access_token(client_id: str, client_secret: str, refresh_token: str
                 'grant_type': 'refresh_token'
             }
         )
-        response.raise_for_status()  # Sjekker for HTTP-feil
-        response_data = response.json()
+        respons.raise_for_status()  # Sjekker for HTTP-feil
+        response_data = respons.json()
         return (
             response_data["access_token"],
             response_data["refresh_token"],
@@ -77,7 +78,7 @@ def hent_access_token(client_id: str, client_secret: str, authorization_code: st
             Hvis noe går galt returneres (None, None, None).
     """
     try:
-        response = requests.post(
+        respons = requests.post(
             'https://www.strava.com/api/v3/oauth/token',
             data={
                 'client_id': client_id,
@@ -86,8 +87,8 @@ def hent_access_token(client_id: str, client_secret: str, authorization_code: st
                 'grant_type': 'authorization_code'
             }
         )
-        response.raise_for_status()  # Sjekker for HTTP-feil
-        response_data = response.json()
+        respons.raise_for_status()  # Sjekker for HTTP-feil
+        response_data = respons.json()
         return (
             response_data["access_token"],
             response_data["refresh_token"],
@@ -150,5 +151,5 @@ def sikre_tokens(info: PrivatInfo) -> tuple[str | None, str | None]:
                 "expires_at": expires_at,
             })
     else:
-        print(f"Access token er fortsatt gyldig i {expires_at - now} sekunder.")
+        print(f"Access token er fortsatt gyldig i {sekunder_til_tid(expires_at - now)}.")
     return access_token, refresh_token

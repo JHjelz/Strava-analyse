@@ -74,3 +74,52 @@ def fin_print(aktiviteter: list[dict]) -> None:
             streng = f"{dato} - {navn} - {akt_type} - Tid: {tid} - Distanse: {distanse_km:.2f} km - {fart} - Kudos: {kudos} - Kommentarer: {kommentarer}"
         
         print(streng)
+
+def fin_print_av_rekorder(rekorder: dict) -> None:
+    """
+    Printer rekordene i et ryddig oppsett.
+
+    Args:
+        rekorder (dict): Dictionary fra finn_rekorder()
+    """
+    globale_kategorier = ["flest_kudos", "flest_kommentarer"]
+
+    print("\n=== GLOBALE REKORDER ===")
+    for kategori, aktiviteter in rekorder.items():
+        if kategori in globale_kategorier:
+            print(f"\n--- {kategori.replace('_', ' ').title()} ---")
+            for akt in aktiviteter:
+                dato = datetime.fromisoformat(akt["start_date"].replace("Z", "+00:00")).strftime("%Y-%m-%d %H:%M")
+                navn = akt.get("name", "Uten navn")
+                akt_type = akt.get("type", "?")
+                tid = sekunder_til_tid(akt.get("moving_time", 0))
+                distanse_km = akt.get("distance", 0) / 1000
+                fart = beregn_pace_eller_hastighet(akt.get("distance", 0), akt.get("moving_time", 0), akt_type)
+                kudos = akt.get("kudos_count", 0)
+                kommentarer = akt.get("comment_count", 0)
+                print(f"{dato} - {navn} - {akt_type} - Tid: {tid} - Distanse: {distanse_km:.2f} km - {fart} - Kudos: {kudos} - Kommentarer: {kommentarer}")
+
+    print("\n=== REKORDER PER AKTIVITETSTYPE ===")
+    per_type_kategorier = {}
+    for nøkkel in rekorder:
+        if nøkkel in globale_kategorier:
+            continue
+        if "_" in nøkkel:
+            kategori, akt_type = nøkkel.rsplit("_", 1)
+            if kategori not in per_type_kategorier:
+                per_type_kategorier[kategori] = {}
+            per_type_kategorier[kategori][akt_type] = rekorder[nøkkel]
+
+    for kategori, typer in per_type_kategorier.items():
+        print(f"\n--- {kategori.replace('_', ' ').title()} ---")
+        for akt_type, aktiviteter in typer.items():
+            print(f"\n** {akt_type} **")
+            for akt in aktiviteter:
+                dato = datetime.fromisoformat(akt["start_date"].replace("Z", "+00:00")).strftime("%Y-%m-%d %H:%M")
+                navn = akt.get("name", "Uten navn")
+                tid = sekunder_til_tid(akt.get("moving_time", 0))
+                distanse_km = akt.get("distance", 0) / 1000
+                fart = beregn_pace_eller_hastighet(akt.get("distance", 0), akt.get("moving_time", 0), akt_type)
+                kudos = akt.get("kudos_count", 0)
+                kommentarer = akt.get("comment_count", 0)
+                print(f"{dato} - {navn} - Tid: {tid} - Distanse: {distanse_km:.2f} km - {fart} - Kudos: {kudos} - Kommentarer: {kommentarer}")

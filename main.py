@@ -8,12 +8,6 @@ from python.strava import StravaKlient
 
 klient = StravaKlient()
 
-from python.aktiviteter import hent_aktiviteter, finn_aktiviteter_med_type, finn_aktiviteter_paa_dato
-from python.visning import fin_print
-
-aktiviteter = finn_aktiviteter_med_type(klient.access_token, "Terrengløp")
-fin_print(aktiviteter)
-
 """
 Hva som finnes nå:
 
@@ -22,5 +16,14 @@ Hva som finnes nå:
 -[] Hent aktivitet(er) på dato
 -[] Hent kudos-giver(e) for aktivitet på navn
 -[] Hent aktivitet(er) på aktivitetstype
+-[] Hente diverse rekorder
 -[] Printer aktivitetene fint
+-[] Printe rekorder pent og ryddig
 """
+
+from python.rekorder import finn_rekorder
+from python.visning import fin_print_av_rekorder
+
+rekorder = finn_rekorder(klient.access_token)
+
+fin_print_av_rekorder(rekorder)
