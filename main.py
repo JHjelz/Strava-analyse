@@ -21,9 +21,14 @@ Hva som finnes nå:
 -[] Printe rekorder pent og ryddig
 """
 
-from python.rekorder import finn_rekorder
-from python.visning import fin_print_av_rekorder
+from python.aktiviteter import hent_aktiviteter
+from python.geo import lag_rutekart
+from python.pdf_generator import lag_aktivitetsrapport
 
-rekorder = finn_rekorder(klient.access_token)
+aktiviteter = hent_aktiviteter(klient.access_token)
 
-fin_print_av_rekorder(rekorder)
+aktivitet = aktiviteter[0]
+
+lag_rutekart(aktivitet)
+
+lag_aktivitetsrapport(aktivitet)

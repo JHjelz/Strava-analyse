@@ -16,22 +16,22 @@ def hent_aktiviteter(access_token: str, per_page: int = 20) -> list[dict]:
     Antall aktiviteter kan begrenses med `per_page`.
 
     Args:
-        access_token (str): Gyldig Strava access token for brukeren.
+        access_token (str): Gyldig Strava access token for brukeren
         per_page (int, optional): Antall aktiviteter som skal hentes per kall.
-            Standard er 20. Strava tillater opptil 200.
+            Standard er 20. Strava tillater opptil 200
 
     Returns:
         list[dict]:
-            En liste med aktiviteter i JSON-format (dict-objekter).
+            En liste med aktiviteter i JSON-format (dict-objekter)
             Hver aktivitet inneholder nøkkelinformasjon som:
-            - id (int): Strava-ID for aktiviteten.
-            - name (str): Navn på aktiviteten (ofte gitt av bruker eller Strava).
-            - distance (float): Distanse i meter.
-            - moving_time (int): Bevegelsestid i sekunder.
-            - type (str): Aktivitetstype (f.eks. "Run", "Ride", "Swim").
-            - start_date (str): Starttidspunkt i ISO 8601-format.
-            ... og flere felt avhengig av Strava API.
-        Returnerer [] hvis noe feiler.
+            - id (int): Strava-ID for aktiviteten
+            - name (str): Navn på aktiviteten (ofte gitt av bruker eller Strava)
+            - distance (float): Distanse i meter
+            - moving_time (int): Bevegelsestid i sekunder
+            - type (str): Aktivitetstype (f.eks. "Run", "Ride", "Swim")
+            - start_date (str): Starttidspunkt i ISO 8601-format
+            ... og flere felt avhengig av Strava API
+        Returnerer [] hvis noe feiler
     """
     url = "https://www.strava.com/api/v3/athlete/activities"
     headers = {"Authorization": f"Bearer {access_token}"}
@@ -53,11 +53,11 @@ def finn_aktiviteter_med_navn(access_token: str, navn: str, maks_treff: int = 20
     Søker gjennom alle brukerens aktiviteter og returnerer de som matcher navnet.
 
     Args:
-        access_token (str): Gyldig Strava access token for brukeren.
-        navn (str): Tekststreng som skal matches mot aktivitetens navn.
-                    Treffer både eksakt og delvis samsvar (case-insensitive).
-        maks_treff (int, optional): Maks antall aktiviteter som returneres. Default er 20.
-        per_page (int, optional): Antall aktiviteter å hente per API-kall. Default er 200 (maks).
+        access_token (str): Gyldig Strava access token for brukeren
+        navn (str): Tekststreng som skal matches mot aktivitetens navn
+                    Treffer både eksakt og delvis samsvar (case-insensitive)
+        maks_treff (int, optional): Maks antall aktiviteter som returneres. Default er 20
+        per_page (int, optional): Antall aktiviteter å hente per API-kall. Default er 200 (maks)
 
     Returns:
         list[dict]: Liste med aktiviteter (dict) som matcher søket.
@@ -101,9 +101,9 @@ def finn_aktiviteter_paa_dato(access_token: str, dato_str: str, per_page: int = 
     Stopper automatisk når vi har gått forbi datoen.
 
     Args:
-        access_token (str): Gyldig Strava access token for brukeren.
-        dato_str (str): Dato på formatet "dd-mm-åååå", f.eks. "04-09-2025".
-        per_page (int, optional): Antall aktiviteter å hente per API-kall. Default er 200 (maks).
+        access_token (str): Gyldig Strava access token for brukeren
+        dato_str (str): Dato på formatet "dd-mm-åååå", f.eks. "04-09-2025"
+        per_page (int, optional): Antall aktiviteter å hente per API-kall. Default er 200 (maks)
 
     Returns:
         list[dict]: Liste med aktiviteter (dict) som fant sted på valgt dato.
@@ -142,19 +142,43 @@ def finn_aktiviteter_paa_dato(access_token: str, dato_str: str, per_page: int = 
 
     return treff
 
+def finn_aktivitet_med_navn_og_dato(access_token: str, navn: str, dato_str: str) -> dict | None:
+    """
+    Kombinerer søk på navn og dato for å finne en spesifikk aktivitet.
+    Returnerer første treff, eller None hvis ingen finnes.
+
+    Args:
+        access_token (str): Gyldig Strava access token for brukeren
+        navn (str): Navnet på økten en vil finne
+        dato_str (str): Dato på formatet "dd-mm-åååå", f.eks. "04-09-2025"
+
+    Returns:
+        dict: Aktiviteten en er ute etter
+        ... eller None om det ikke er noen match
+    """
+    aktiviteter_med_navn = finn_aktiviteter_med_navn(access_token, navn, maks_treff=100)
+    aktiviteter_paa_dato = finn_aktiviteter_paa_dato(access_token, dato_str)
+
+    for akt in aktiviteter_med_navn:
+        for akt_dato in aktiviteter_paa_dato:
+            if akt["id"] == akt_dato["id"]:
+                return akt
+
+    return None
+
 def finn_aktiviteter_med_type(access_token: str, aktivitetstype: str, maks_treff: int = 20, per_page: int = 200) -> list[dict]:
     """
     Søker gjennom brukerens aktiviteter og returnerer de siste aktivitetene av valgt type.
 
     Args:
-        access_token (str): Gyldig Strava access token for brukeren.
+        access_token (str): Gyldig Strava access token for brukeren
         aktivitetstype (str): Type aktivitet (norsk, f.eks. 'løp', 'sykkel', 'svømming').
-                              Mappes internt til Strava sine typer ('Run', 'Ride', 'Swim', ...).
-        maks_treff (int, optional): Antall aktiviteter som returneres. Default = 20.
-        per_page (int, optional): Antall aktiviteter som hentes per API-kall. Default = 200 (maks).
+                              Mappes internt til Strava sine typer ('Run', 'Ride', 'Swim', ...)
+        maks_treff (int, optional): Antall aktiviteter som returneres. Default = 20
+        per_page (int, optional): Antall aktiviteter som hentes per API-kall. Default = 200 (maks)
 
     Returns:
-        list[dict]: Liste med aktiviteter (dict) som matcher søket.
+        list[dict]: Liste med aktiviteter (dict) som matcher søket
     """
     # Norsk -> Strava mapping
     type_map = {

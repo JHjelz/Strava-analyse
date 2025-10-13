@@ -3,8 +3,23 @@
 # Bibliotek
 
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 # Funksjoner
+
+def hent_dato_for_Norge(aktivitet: dict) -> str:
+    """
+    Henter dato med korrekt tid for norsk tidssone.
+
+    Args:
+        aktivitet (dict): Aktivitet lagret som dictionary fra Strava-API
+
+    Returns:
+        str: Korrekt dato med tid på streng-format
+    """
+    return datetime.fromisoformat(aktivitet["start_date"].replace("Z", "+00:00"))\
+        .astimezone(ZoneInfo("Europe/Oslo"))\
+            .strftime("%Y-%m-%d %H:%M")
 
 def sekunder_til_tid(sek: int) -> str:
     """
@@ -58,7 +73,7 @@ def fin_print(aktiviteter: list[dict]) -> None:
         aktiviteter (list[dict]): En liste av aktiviter på dictionary-format
     """
     for akt in aktiviteter:
-        dato = datetime.fromisoformat(akt["start_date"].replace("Z", "+00:00")).strftime("%Y-%m-%d %H:%M")
+        dato = hent_dato_for_Norge(akt)
         navn = akt.get("name", "Uten navn")
         akt_type = akt.get("type", "?")
         akt_variant = akt.get("sport_type", "?")
@@ -89,7 +104,7 @@ def fin_print_av_rekorder(rekorder: dict) -> None:
         if kategori in globale_kategorier:
             print(f"\n--- {kategori.replace('_', ' ').title()} ---")
             for akt in aktiviteter:
-                dato = datetime.fromisoformat(akt["start_date"].replace("Z", "+00:00")).strftime("%Y-%m-%d %H:%M")
+                dato = hent_dato_for_Norge(akt)
                 navn = akt.get("name", "Uten navn")
                 akt_type = akt.get("type", "?")
                 tid = sekunder_til_tid(akt.get("moving_time", 0))
@@ -115,7 +130,7 @@ def fin_print_av_rekorder(rekorder: dict) -> None:
         for akt_type, aktiviteter in typer.items():
             print(f"\n** {akt_type} **")
             for akt in aktiviteter:
-                dato = datetime.fromisoformat(akt["start_date"].replace("Z", "+00:00")).strftime("%Y-%m-%d %H:%M")
+                dato = hent_dato_for_Norge(akt)
                 navn = akt.get("name", "Uten navn")
                 tid = sekunder_til_tid(akt.get("moving_time", 0))
                 distanse_km = akt.get("distance", 0) / 1000

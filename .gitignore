@@ -1,13 +1,17 @@
-# Python-specific ignores
+# Python-spesifikke filer å ignorere
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
 *.log
 
-# Virtual environment
+# Virtuelle miljø
 venv/
 env/
 
 # Private data
 strava_tokens.json
+
+# Genererte filer
+*.png
+*.pdf

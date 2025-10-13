@@ -1,4 +1,4 @@
-# 🚴‍♂️ Strava-analyse
+# 🚴‍♂️ Strava-analyse 🏃‍♀️
 
 Dette prosjektet er en Python-klient for å koble seg opp mot [Strava sitt API](https://developers.strava.com/).  
 Systemet lar deg autentisere med dine egne Strava-nøkler, hente tokens og bruke disse til å kjøre spørringer mot Strava-data (f.eks. aktiviteter).

@@ -3,7 +3,7 @@
 # Bibliotek:
 
 from privat import PrivatInfo
-from python.tilgang import sikre_tokens
+from .tilgang import sikre_tokens
 
 # Klasse:
 
@@ -16,9 +16,9 @@ class StravaKlient:
     `PrivatInfo` og `sikre_tokens`.
 
     Attributter:
-        info (PrivatInfo): Holder konfigurasjon og lagrede Strava-tokens.
-        access_token (str | None): Gyldig access token som kan brukes mot API-et (None ved feil).
-        refresh_token (str | None): Refresh token knyttet til access_token (None ved feil).
+        info (PrivatInfo): Holder konfigurasjon og lagrede Strava-tokens
+        access_token (str | None): Gyldig access token som kan brukes mot API-et (None ved feil)
+        refresh_token (str | None): Refresh token knyttet til access_token (None ved feil)
     """
 
     def __init__(self):

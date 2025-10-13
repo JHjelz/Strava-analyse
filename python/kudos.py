@@ -11,12 +11,12 @@ def hent_kudosgivere(access_token: str, aktivitet_id: int, per_page: int = 200) 
     Henter alle brukere som har gitt kudos på en gitt aktivitet.
 
     Args:
-        access_token (str): Gyldig Strava access token.
-        aktivitet_id (int): ID-en til aktiviteten.
-        per_page (int, optional): Antall kudoers per kall (maks 200).
+        access_token (str): Gyldig Strava access token
+        aktivitet_id (int): ID-en til aktiviteten
+        per_page (int, optional): Antall kudoers per kall (maks 200)
 
     Returns:
-        list[dict]: Liste med atleter (brukere) som har gitt kudos.
+        list[dict]: Liste med atleter (brukere) som har gitt kudos
     """
     url = f"https://www.strava.com/api/v3/activities/{aktivitet_id}/kudos"
     headers = {"Authorization": f"Bearer {access_token}"}

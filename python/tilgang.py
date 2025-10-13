@@ -6,7 +6,7 @@ import requests
 import time
 
 from privat import PrivatInfo
-from python.visning import sekunder_til_tid
+from .visning import sekunder_til_tid
 
 # Funksjoner:
 
@@ -18,16 +18,16 @@ def oppdater_access_token(client_id: str, client_secret: str, refresh_token: str
     automatisk fra 'sikre_tokens', men kan også brukes manuelt.
 
     Args:
-        client_id (str): Strava-klient-ID.
-        client_secret (str): Strava-klient-hemmelighet.
-        refresh_token (str): Gammelt refresh token som brukes for å hente nye tokens.
+        client_id (str): Strava-klient-ID
+        client_secret (str): Strava-klient-hemmelighet
+        refresh_token (str): Gammelt refresh token som brukes for å hente nye tokens
 
     Returns:
         tuple[str | None, str | None, int | None]:
-            - access_token (str | None): Nytt access token.
-            - refresh_token (str | None): Nytt refresh token.
-            - expires_at (int | None): Unix timestamp for når access token utløper.
-            Hvis noe går galt returneres (None, None, None).
+            - access_token (str | None): Nytt access token
+            - refresh_token (str | None): Nytt refresh token
+            - expires_at (int | None): Unix timestamp for når access token utløper
+            Hvis noe går galt returneres (None, None, None)
     """
     try:
         respons = requests.post(
@@ -66,16 +66,16 @@ def hent_access_token(client_id: str, client_secret: str, authorization_code: st
         5. Kall denne funksjonen med koden.
 
     Args:
-        client_id (str): Strava-klient-ID.
-        client_secret (str): Strava-klient-hemmelighet.
-        authorization_code (str): Engangskode hentet manuelt fra Strava.
+        client_id (str): Strava-klient-ID
+        client_secret (str): Strava-klient-hemmelighet
+        authorization_code (str): Engangskode hentet manuelt fra Strava
 
     Returns:
         tuple[str | None, str | None, int | None]:
-            - access_token (str | None): Nytt access token.
-            - refresh_token (str | None): Nytt refresh token.
-            - expires_at (int | None): Unix timestamp for når access token utløper.
-            Hvis noe går galt returneres (None, None, None).
+            - access_token (str | None): Nytt access token
+            - refresh_token (str | None): Nytt refresh token
+            - expires_at (int | None): Unix timestamp for når access token utløper
+            Hvis noe går galt returneres (None, None, None)
     """
     try:
         respons = requests.post(
@@ -103,20 +103,20 @@ def sikre_tokens(info: PrivatInfo) -> tuple[str | None, str | None]:
     Sørger for atgyldige tokens er tilgjengelige og oppdaterer dem ved behov.
 
     Logikken er:
-        - Hvis ingen tokens er lagret: henter nye med authorization_code.
-        - Hvis access_token er utløpt: oppdaterer med refresh_token.
-        - Hvis access_token fortsatt er gyldig: returnerer eksisterende tokens.
+        - Hvis ingen tokens er lagret: henter nye med authorization_code
+        - Hvis access_token er utløpt: oppdaterer med refresh_token
+        - Hvis access_token fortsatt er gyldig: returnerer eksisterende tokens
 
     Bruk denne funksjonen som hovedinngang for å hente gyldige tokens til API-kall.
 
     Args:
         info (PrivatInfo): Et PrivatInfo-objekt som holder client_id,
-            client_secret, authorization_code og eventuelle tokens.
+            client_secret, authorization_code og eventuelle tokens
 
     Returns:
         tuple[str | None, str | None]:
-            - access_token (str | None): Gyldig access token.
-            - refresh_token (str | None): Refresh token knyttet til access token.
+            - access_token (str | None): Gyldig access token
+            - refresh_token (str | None): Refresh token knyttet til access token
     """
     kreditering = info.hent_privat_info()
     client_id = kreditering.get("client_id")

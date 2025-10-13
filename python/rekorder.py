@@ -32,7 +32,7 @@ def finn_rekorder(access_token: str, per_page: int=200) -> dict:
         "lengste": ("distance", 3),
         "varighet": ("moving_time", 3),
         "flest_høydemeter": ("total_elevation_gain", 3),
-        "brattest": {"_bratthet", 3},
+        "brattest": ("_bratthet", 3),
         "raskeste_snittfart": ("average_speed", 3),
         "maksfart": ("max_speed", 3)
     }
