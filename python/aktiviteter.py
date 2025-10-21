@@ -3,6 +3,7 @@
 # Bibliotek
 
 import requests
+
 from datetime import datetime
 
 # Funksjoner
@@ -142,7 +143,7 @@ def finn_aktiviteter_paa_dato(access_token: str, dato_str: str, per_page: int = 
 
     return treff
 
-def finn_aktivitet_med_navn_og_dato(access_token: str, navn: str, dato_str: str) -> dict | None:
+def finn_aktivitet_med_navn_og_dato(access_token: str, navn: str, dato_str: str, per_page: int=200) -> dict | None:
     """
     Kombinerer søk på navn og dato for å finne en spesifikk aktivitet.
     Returnerer første treff, eller None hvis ingen finnes.
@@ -151,20 +152,47 @@ def finn_aktivitet_med_navn_og_dato(access_token: str, navn: str, dato_str: str)
         access_token (str): Gyldig Strava access token for brukeren
         navn (str): Navnet på økten en vil finne
         dato_str (str): Dato på formatet "dd-mm-åååå", f.eks. "04-09-2025"
+        per_page (int, optional): Antall aktiviteter å hente per API-kall. Default er 200 (maks)
 
     Returns:
         dict: Aktiviteten en er ute etter
         ... eller None om det ikke er noen match
     """
-    aktiviteter_med_navn = finn_aktiviteter_med_navn(access_token, navn, maks_treff=100)
-    aktiviteter_paa_dato = finn_aktiviteter_paa_dato(access_token, dato_str)
+    url = "https://www.strava.com/api/v3/athlete/activities"
+    headers = {"Authorization": f"Bearer {access_token}"}
+    navn = navn.lower()
 
-    for akt in aktiviteter_med_navn:
-        for akt_dato in aktiviteter_paa_dato:
-            if akt["id"] == akt_dato["id"]:
-                return akt
+    valgt_dato = datetime.strptime(dato_str, "%d-%m-%Y").date()
+    side = 1
+    treff = []
 
-    return None
+    while True:
+        try:
+            respons = requests.get(url, headers=headers, params={"per_page": per_page, "page": side})
+            respons.raise_for_status()
+            aktiviteter = respons.json()
+        
+        except requests.exceptions.RequestException as e:
+            print(f"Feil ved henting av aktiviteter: {e}")
+            break
+
+        if not aktiviteter:  # Ingen flere aktiviteter
+            break
+
+        for aktivitet in aktiviteter:
+            akt_dato = datetime.fromisoformat(aktivitet["start_date_local"].split("Z")[0]).date()
+
+            if akt_dato < valgt_dato:
+                # Alle resterende aktiviteter vil være eldre, vi kan stoppe
+                return treff
+
+            if akt_dato == valgt_dato:
+                if navn in aktivitet["name"].lower():
+                    treff.append(aktivitet)
+
+        side += 1
+
+    return treff
 
 def finn_aktiviteter_med_type(access_token: str, aktivitetstype: str, maks_treff: int = 20, per_page: int = 200) -> list[dict]:
     """

@@ -4,6 +4,7 @@
 
 import heapq
 import requests
+
 from tqdm import tqdm
 
 # Funksjoner
