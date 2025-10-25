@@ -99,7 +99,7 @@ def fancy_footer(canvas: Canvas, font: str, doc) -> None:
     canvas.drawRightString(width - 40, 6, f"Generert med Strava API {hent_ikon('Run')} {hent_ikon('Ride')}")
     canvas.restoreState()
 
-def lag_aktivitetsrapport(aktivitet: dict, pdf_fil: str="rapport.pdf") -> None:
+def lag_aktivitetsrapport(aktivitet: dict, pdf_fil: str="aktivitetsrapport.pdf") -> None:
     """
     Lager en PDF med overskrift, nøkkeltall og kartet til aktiviteten.
 

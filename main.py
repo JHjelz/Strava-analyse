@@ -25,7 +25,7 @@ Hva som finnes nå:
 from python.aktiviteter import hent_aktiviteter, finn_aktivitet_med_navn_og_dato, hent_detaljert_aktivitet, hent_streams
 from python.pdf_generator import lag_aktivitetsrapport
 
-aktiviteter = hent_aktiviteter(klient.access_token) # finn_aktivitet_med_navn_og_dato(klient.access_token, "NC", "21-09-2025")
+aktiviteter = finn_aktivitet_med_navn_og_dato(klient.access_token, "NM", "04-09-2025")
 aktivitet = aktiviteter[0]
 aktivitet = hent_detaljert_aktivitet(klient.access_token, aktivitet["id"])
 streams = hent_streams(klient.access_token, aktivitet["id"])

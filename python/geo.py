@@ -36,6 +36,8 @@ def lag_rutekart(aktivitet: dict, bredde: float) -> io.BytesIO:
     
     # Steg 1: Hent koordinater
     coords = polyline.decode(poly)
+    if len(coords) < 2:
+        return None
 
     # Steg 2: Lag GeoDataFrame med ruten
     linje = LineString([(lon, lat) for lat, lon in coords])
@@ -64,8 +66,8 @@ def lag_rutekart(aktivitet: dict, bredde: float) -> io.BytesIO:
     end_lon, end_lat = coords[-1][1], coords[-1][0]
     start_point = gpd.GeoSeries([Point(start_lon, start_lat)], crs="EPSG:4326").to_crs(epsg=3857)
     end_point = gpd.GeoSeries([Point(end_lon, end_lat)], crs="EPSG:4326").to_crs(epsg=3857)
-    start_point.plot(ax=ax, color="#00CC66", markersize=180, marker="o", edgecolor="white", linewidth=1.5, zorder=3)
-    end_point.plot(ax=ax, color="#CC0000", markersize=180, marker="X", edgecolor="white", linewidth=1.5, zorder=3)
+    start_point.plot(ax=ax, color="#00CC66", markersize=180, marker="o", edgecolor="white", linewidth=1.5, zorder=4)
+    end_point.plot(ax=ax, color="#CC0000", markersize=180, marker="X", edgecolor="white", linewidth=1.5, zorder=4)
 
     # Steg 7: Tilpass aspect til figuren
     fig_aspect = bredde_inn / hoyde_inn
@@ -91,13 +93,56 @@ def lag_rutekart(aktivitet: dict, bredde: float) -> io.BytesIO:
     # Steg 8: Legg til bakgrunnskart
     ctx.add_basemap(ax, source=ctx.providers.OpenStreetMap.Mapnik)
 
-    # Steg 9: Lagre til midlertidig objekt
+    # Steg 9: Generer kilometermarkører langs ruta
+    streams = aktivitet.get("streams", None)
+    if streams and "distance" in streams and "latlng" in streams:
+        distanser = np.array(streams["distance"]["data"]) # [m]
+        latlng = np.array(streams["latlng"]["data"]) # [[lat, lon], ...]
+
+        gdf_stream = gpd.GeoDataFrame(
+            geometry=[Point(lon, lat) for lat, lon in latlng],
+            crs="EPSG:4326"
+        ).to_crs(epsg=3857)
+        
+        km_coords = []
+        next_km = 1000
+
+        for i, d in enumerate(distanser):
+            if d >= next_km:
+                km_coords.append(gdf_stream.geometry.iloc[i])
+                next_km += 1000
+
+        if km_coords:
+            for i, pt in enumerate(km_coords, start=1):
+                x, y = pt.x, pt.y
+                color = "#FFA726" if i % 5 == 0 else "white"
+                size = 300 if i % 5 == 0 else 100
+                ax.scatter(
+                    x, y,
+                    s=size,
+                    facecolor=color,
+                    linewidth=0.8,
+                    alpha=0.8,
+                    zorder=2
+                )
+                if i % 5 == 0:
+                    ax.text(
+                        x, y, str(i),
+                        fontsize=7,
+                        color="black",
+                        weight="bold",
+                        ha="center",
+                        va="center",
+                        zorder=3
+                    )
+
+    # Steg 10: Lagre til midlertidig objekt
     buf = io.BytesIO()
     plt.savefig(buf, format="png", dpi=dpi, bbox_inches="tight", pad_inches=0)
     plt.close(fig)
     buf.seek(0)
 
-    # Steg 10: Lag faktisk bilde
+    # Steg 11: Lag faktisk bilde
     img = Image(buf)
     aspect = img.imageHeight / float(img.imageWidth)
     img.drawWidth = bredde
@@ -186,6 +231,15 @@ def lag_hoydeprofil(aktivitet: dict) -> Image | None:
     cbar = fig.colorbar(lc, ax=ax, orientation="vertical", fraction=0.035, pad=0.02)
     cbar.set_label("Stigning")
     cbar.ax.tick_params(labelsize=7)
+
+    # 🎯 Kilometermarkører på høydeprofil
+    km_markører = np.arange(1, int(distanse.max()) + 1)
+    høyde_markører = [høyder[np.argmin(np.abs(distanse - km))] for km in km_markører]
+
+    ax.scatter(
+        km_markører, høyde_markører,
+        color="#1f77b4", edgecolor="white", s=20, zorder=5, linewidth=0.6
+    )
 
     # 📸 Lagre til buffer med høy oppløsning
     buffer = io.BytesIO()

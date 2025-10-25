@@ -286,7 +286,7 @@ def hent_streams(access_token: str, aktivitet_id: int) -> dict | None:
     Returns:
         dict: Stream-data (inneholder bl.a. 'altitude' og 'distance')
     """
-    url = f"https://www.strava.com/api/v3/activities/{aktivitet_id}/streams"
+    url = f"https://www.strava.com/api/v3/activities/{aktivitet_id}/streams?keys=latlng,distance,altitude"
     headers = {"Authorization": f"Bearer {access_token}"}
     params = {"keys": "altitude,distance", "key_by_type": "true"}
 
