@@ -10,7 +10,7 @@ from reportlab.pdfgen.canvas import Canvas
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import BaseDocTemplate, Frame, PageTemplate, Paragraph, Spacer, Table, TableStyle
 
-from .geo import lag_rutekart
+from .geo import lag_rutekart, lag_hoydeprofil
 from .visning import hent_dato_for_Norge, sekunder_til_tid
 
 # Funksjoner
@@ -39,9 +39,48 @@ def hent_stiler() -> tuple[ParagraphStyle, ParagraphStyle, ParagraphStyle]:
         parent=styles["Heading2"],
         fontName=font
     )
-    return emoji_title, emoji_heading, font
+    emoji_paragraph = ParagraphStyle(
+        "EmojiParagraph",
+        parent=styles["Normal"],
+        fontName=font,
+        fontSize=11,
+        leading=14,
+    )
+    return emoji_title, emoji_heading, emoji_paragraph, font
 
-def footer(canvas: Canvas, font: str, doc) -> None:
+def hent_ikon(aktivitet: str) -> str:
+    """
+    Finner ikon i form av emoji som representerer valgt aktivitet.
+
+    Args:
+        aktivitet (str): Ønsket aktivitet i streng-format
+
+    Returns:
+        str: Ønsket emoji, eller en fall back, i streng-format
+    """
+    aktivitetsikoner = {
+        "Run": "🏃‍♂️",
+        "Ride": "🚴‍♂️",
+        "Swim": "🏊‍♀️",
+        "Walk": "🚶‍♂️"
+    }
+    return aktivitetsikoner.get(aktivitet, "🔥")[0]
+
+def fancy_header(canvas: Canvas, doc):
+    """
+    Tegner en fast topptekst på hver side i PDF-en.
+
+    Args:
+        canvas (Canvas): ReportLab Canvas-objektet som brukes til å tegne innhold på siden
+        doc (BaseDocTemplate): Dokumentobjektet som inneholder layout og metadata for PDF-en
+    """
+    canvas.saveState()
+    width, height = A4
+    canvas.setFillColor(colors.HexColor("#FF6F00"))
+    canvas.rect(0, height - 30, width, 30, fill=1, stroke=0)
+    canvas.restoreState()
+
+def fancy_footer(canvas: Canvas, font: str, doc) -> None:
     """
     Tegner en fast bunntekst på hver side i PDF-en.
 
@@ -51,8 +90,13 @@ def footer(canvas: Canvas, font: str, doc) -> None:
         doc (BaseDocTemplate): Dokumentobjektet som inneholder layout og metadata for PDF-en
     """
     canvas.saveState()
+    width, _ = A4
+    # Oransje bunnstrek
+    canvas.setFillColor(colors.HexColor("#FF6F00"))
+    canvas.rect(0, 0, width, 20, fill=1, stroke=0)
+    canvas.setFillColor(colors.white)
     canvas.setFont(font, 8)
-    canvas.drawString(40, 20, "Generert med Strava API 🚴")
+    canvas.drawRightString(width - 40, 6, f"Generert med Strava API {hent_ikon('Run')} {hent_ikon('Ride')}")
     canvas.restoreState()
 
 def lag_aktivitetsrapport(aktivitet: dict, pdf_fil: str="rapport.pdf") -> None:
@@ -68,15 +112,17 @@ def lag_aktivitetsrapport(aktivitet: dict, pdf_fil: str="rapport.pdf") -> None:
     kart_img = lag_rutekart(aktivitet, kart_bredde)
 
     if kart_img:
-        tittel, header, paragraf = hent_stiler()
+        tittel, header, paragraf_stil, paragraf = hent_stiler()
         frame = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id="normal")
-        template = PageTemplate(id="footer", frames=frame, onPage=lambda canvas, doc: footer(canvas, paragraf, doc))
+        template = PageTemplate(id="footer", frames=frame, onPage=fancy_header, onPageEnd=lambda canvas, doc: fancy_footer(canvas, paragraf, doc))
         doc.addPageTemplates([template])
         story = []
 
         # Stor overskrift øverst
+        ikon = hent_ikon(aktivitet.get("sport_type"))
+        
         tittel_tabell = Table(
-            [[Paragraph(f"{aktivitet['name']}", tittel)]],
+            [[Paragraph(f"{ikon} {aktivitet['name']}", tittel)]],
             colWidths=[doc.width]
         )
         tittel_tabell.setStyle(TableStyle([
@@ -86,7 +132,13 @@ def lag_aktivitetsrapport(aktivitet: dict, pdf_fil: str="rapport.pdf") -> None:
             ("TOPPADDING", (0,0), (-1,-1), 16)
         ]))
         story.append(tittel_tabell)
-        story.append(Spacer(1, 15))
+        story.append(Spacer(1, 10))
+
+        # Beskrivelse
+        if aktivitet.get("description"):
+            story.append(Spacer(1, 5))
+            story.append(Paragraph(f"📝 {aktivitet['description'].replace('å', 'aa')}", paragraf_stil))
+            story.append(Spacer(1, 15))
 
         # Litt større undertittel
         story.append(Paragraph("📊 Nøkkeldata", header))
@@ -113,6 +165,25 @@ def lag_aktivitetsrapport(aktivitet: dict, pdf_fil: str="rapport.pdf") -> None:
         story.append(tabell)
         story.append(Spacer(1, 25))
 
+        # Kudos og kommentarer
+        story.append(Spacer(1, 15))
+        story.append(Paragraph("💬 Sosial aktivitet", header))
+        story.append(Spacer(1, 10))
+
+        sosial_data = [
+            ["👍 Kudos", f"{aktivitet.get('kudos_count', 0)}"],
+            ["💭 Kommentarer", f"{aktivitet.get('comment_count', 0)}"]
+        ]
+        sosial_tabell = Table(sosial_data, colWidths=[100, doc.width-100])
+        sosial_tabell.setStyle(TableStyle([
+            ("FONTNAME", (0,0), (-1,-1), paragraf),
+            ("FONTSIZE", (0,0), (-1,-1), 11),
+            ("BOTTOMPADDING", (0,0), (-1,-1), 6),
+            ("TOPPADDING", (0,0), (-1,-1), 6),
+            ("ROWBACKGROUNDS", (0,1), (-1,-1), [colors.whitesmoke, colors.lightgrey])
+        ]))
+        story.append(sosial_tabell)
+
         # Kart
         story.append(Paragraph("🗺️ Rute", header))
         story.append(Spacer(1, 10))
@@ -125,6 +196,13 @@ def lag_aktivitetsrapport(aktivitet: dict, pdf_fil: str="rapport.pdf") -> None:
             ("BACKGROUND", (0,0), (-1,-1), colors.whitesmoke)
         ]))
         story.append(kart_tabell)
+
+        hoyde_img = lag_hoydeprofil(aktivitet)
+        if hoyde_img:
+            story.append(Spacer(1, 25))
+            story.append(Paragraph("🏔️ Høydeprofil", header))
+            story.append(Spacer(1, 10))
+            story.append(hoyde_img)
 
         doc.build(story)
         print(f"PDF generert: {pdf_fil}")

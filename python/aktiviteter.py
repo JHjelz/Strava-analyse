@@ -253,3 +253,47 @@ def finn_aktiviteter_med_type(access_token: str, aktivitetstype: str, maks_treff
         side += 1
 
     return treff
+
+def hent_detaljert_aktivitet(access_token: str, aktivitet_id: int) -> dict | None:
+    """
+    Henter mer detaljert informasjon for en spesifikk aktivitet.
+
+    Args:
+        access_token (str): Gyldig Strava access token for brukeren
+        aktivitet_id (int): IDen til aktiviteten en er ute etter
+    
+    Returns:
+        dict | None: Aktivitet fra Strava-API med mer detaljer, None ved feil
+    """
+    url = f"https://www.strava.com/api/v3/activities/{aktivitet_id}"
+    headers = {"Authorization": f"Bearer {access_token}"}
+    try:
+        resp = requests.get(url, headers=headers)
+        resp.raise_for_status()
+        return resp.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Feil ved henting av detaljert aktivitet {aktivitet_id}: {e}")
+        return None
+
+def hent_streams(access_token: str, aktivitet_id: int) -> dict | None:
+    """
+    Henter høyde-, distanse- og andre streams for en gitt Strava-aktivitet.
+
+    Args:
+        access_token (str): Gyldig Strava access token for brukeren
+        aktivitet_id (int): IDen til aktiviteten en er ute etter
+    
+    Returns:
+        dict: Stream-data (inneholder bl.a. 'altitude' og 'distance')
+    """
+    url = f"https://www.strava.com/api/v3/activities/{aktivitet_id}/streams"
+    headers = {"Authorization": f"Bearer {access_token}"}
+    params = {"keys": "altitude,distance", "key_by_type": "true"}
+
+    try:
+        resp = requests.get(url, headers=headers, params=params)
+        resp.raise_for_status()
+        return resp.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Feil ved henting av streams for aktivitet {aktivitet_id}: {e}")
+        return None
